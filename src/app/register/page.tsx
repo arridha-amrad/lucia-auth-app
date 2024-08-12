@@ -12,33 +12,30 @@ export default function Page() {
       username: formData.get("username") as string,
       password: formData.get("password") as string,
     };
-    try {
-      const hashedPassword = await hash(rawFormData.password, {
-        memoryCost: 19456,
-        timeCost: 2,
-        outputLen: 32,
-        parallelism: 1,
-      });
 
-      const newUser = await prisma.user.create({
-        data: {
-          email: rawFormData.email,
-          username: rawFormData.username,
-          password_hsh: hashedPassword,
-        },
-      });
+    const hashedPassword = await hash(rawFormData.password, {
+      memoryCost: 19456,
+      timeCost: 2,
+      outputLen: 32,
+      parallelism: 1,
+    });
 
-      const session = await lucia.createSession(newUser.id, {});
-      const sessionCookie = lucia.createSessionCookie(session.id);
-      cookies().set(
-        sessionCookie.name,
-        sessionCookie.value,
-        sessionCookie.attributes
-      );
-      return redirect("/");
-    } catch (err) {
-      console.log(err);
-    }
+    const newUser = await prisma.user.create({
+      data: {
+        email: rawFormData.email,
+        username: rawFormData.username,
+        password_hsh: hashedPassword,
+      },
+    });
+
+    const session = await lucia.createSession(newUser.id, {});
+    const sessionCookie = lucia.createSessionCookie(session.id);
+    cookies().set(
+      sessionCookie.name,
+      sessionCookie.value,
+      sessionCookie.attributes
+    );
+    return redirect("/");
   };
 
   return (
