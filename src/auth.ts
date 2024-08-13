@@ -21,6 +21,8 @@ export const lucia = new Lucia(adapter, {
       // attributes has the type of DatabaseUserAttributes
       id: attributes.id,
       username: attributes.username,
+      emailVerified: attributes.email_verified,
+      email: attributes.email,
     };
   },
 });
@@ -65,10 +67,17 @@ declare module "lucia" {
   interface Register {
     Lucia: typeof lucia;
     DatabaseUserAttributes: DatabaseUserAttributes;
+    DatabaseSessionAttributes: DatabaseSessionAttributes;
   }
 }
 
 interface DatabaseUserAttributes {
   username: string;
   id: string;
+  email: string;
+  email_verified: boolean;
+}
+
+interface DatabaseSessionAttributes {
+  country: string;
 }

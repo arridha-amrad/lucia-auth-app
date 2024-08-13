@@ -23,13 +23,15 @@ export async function login(_: any, formData: FormData) {
     };
   }
 
-  const isMatch = await verify(user.password_hsh, password);
+  const isMatch = await verify(user.passwordHash, password);
   if (!isMatch) {
     return {
       error: "Invalid password",
     };
   }
-  const session = await lucia.createSession(user.id, {});
+  const session = await lucia.createSession(user.id, {
+    country: "indonesia",
+  });
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
     sessionCookie.name,

@@ -1,0 +1,18 @@
+How to rename a column with Prisma migrations
+Edit the name of your column in your schema.prisma file.
+
+Run prisma migrate dev --create-only. This will generate the SQL migration file, but will not immediately run it.
+
+You’ll be prompted with a warning that you’re about to drop a column. This is ok because we’ll manually fix the migration. Type y to proceed.
+
+You’ll be prompted to enter a name for your migration.
+
+Open the newly generated migration.sql file in the prisma/migrations directory. Notice that it drops the original column and creates a whole new column. We don’t want this, since it will delete all existing data in that column. The generated SQL should look something like this:
+
+-- AlterTable
+ALTER TABLE "MyTable" DROP COLUMN "oldName",
+ADD COLUMN "newName" INTEGER;
+Edit the SQL query to simply rename the table, like this:
+
+ALTER TABLE "MyTable" RENAME COLUMN "oldName" TO "newName";
+Run prisma migrate dev to run your modified migration.
