@@ -12,8 +12,10 @@
     "@lucia-auth/adapter-prisma": "^4.0.1",
     "@node-rs/argon2": "^1.8.3",
     "@prisma/client": "^5.18.0",
+    "googleapis": "^140.0.1",
     "lucia": "^3.2.0",
     "next": "14.2.5",
+    "nodemailer": "^6.9.14",
     "oslo": "^1.2.1",
     "prisma": "^5.18.0",
     "react": "^18",
@@ -21,6 +23,7 @@
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/nodemailer": "^6.4.15",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
