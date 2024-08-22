@@ -1,12 +1,13 @@
 "use server";
 
+import { lucia } from "@/auth";
 import prisma from "@/db";
 import { generateEmailVerificationCode } from "@/utils/generateVerificationCode";
 import { sendEmail } from "@/utils/sendEmail";
 import { hash } from "@node-rs/argon2";
+import { cookies } from "next/headers";
 
 export const register = async (_: any, formData: FormData) => {
-  "use server";
   const rawFormData = {
     email: formData.get("email") as string,
     username: formData.get("username") as string,
@@ -68,6 +69,15 @@ export const register = async (_: any, formData: FormData) => {
     subject: "Email verification",
     toEmail: newUser.email,
   });
+
+  const session = await lucia.createSession(newUser.id, {});
+  const sessionCookie = lucia.createSessionCookie(session.id);
+
+  cookies().set(
+    sessionCookie.name,
+    sessionCookie.value,
+    sessionCookie.attributes
+  );
 
   return {
     message: "Please check your email",

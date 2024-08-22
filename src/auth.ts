@@ -1,9 +1,8 @@
-import { Lucia } from "lucia";
-
 import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
-import prisma from "./db";
-import { cache } from "react";
+import { Lucia } from "lucia";
 import { cookies } from "next/headers";
+import { cache } from "react";
+import prisma from "./db";
 
 import type { Session, User } from "lucia";
 
@@ -67,7 +66,6 @@ declare module "lucia" {
   interface Register {
     Lucia: typeof lucia;
     DatabaseUserAttributes: DatabaseUserAttributes;
-    DatabaseSessionAttributes: DatabaseSessionAttributes;
   }
 }
 
@@ -76,8 +74,4 @@ interface DatabaseUserAttributes {
   id: string;
   email: string;
   email_verified: boolean;
-}
-
-interface DatabaseSessionAttributes {
-  country: string;
 }

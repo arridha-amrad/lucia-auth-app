@@ -1,5 +1,5 @@
-import { google } from "googleapis";
 import nodemailer from "nodemailer";
+import { oauth2Client } from "./oauth2Google";
 
 type Props = {
   toEmail: string;
@@ -8,11 +8,6 @@ type Props = {
 };
 
 export const sendEmail = async ({ html, subject, toEmail }: Props) => {
-  const oauth2Client = new google.auth.OAuth2({
-    clientId: process.env.GOOGLE_CID,
-    clientSecret: process.env.GOOGLE_CSE,
-  });
-
   try {
     const token = await oauth2Client.getAccessToken();
     let transporter = nodemailer.createTransport({

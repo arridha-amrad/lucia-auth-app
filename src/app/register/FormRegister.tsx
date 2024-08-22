@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useFormState } from "react-dom";
 import { register } from "./action";
 
@@ -11,14 +11,22 @@ const initialState = {
 
 export default function FormRegister() {
   const [state, action] = useFormState(register, initialState);
+
+  const formRef = useRef<HTMLFormElement | null>(null);
+  useEffect(() => {
+    if (state.type === "success") {
+      formRef.current?.reset();
+    }
+  }, [state.type]);
+
   return (
     <form action={action} className="flex flex-col gap-3">
-      {state.type === "error" && (
+      {!!state.message && state.type === "error" && (
         <div className="bg-red-500/50 text-red-500 px-4 py-2">
           {state.message}
         </div>
       )}
-      {state.type === "success" && (
+      {!!state.message && state.type === "success" && (
         <div className="bg-green-500/50 text-green-500 px-4 py-2">
           {state.message}
         </div>
