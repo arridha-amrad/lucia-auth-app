@@ -5,6 +5,7 @@ import { cache } from "react";
 import prisma from "./db";
 
 import type { Session, User } from "lucia";
+import { redirect } from "next/navigation";
 
 const adapter = new PrismaAdapter(prisma.session, prisma.user);
 
@@ -20,7 +21,7 @@ export const lucia = new Lucia(adapter, {
       // attributes has the type of DatabaseUserAttributes
       id: attributes.id,
       username: attributes.username,
-      emailVerified: attributes.email_verified,
+      emailVerified: attributes.emailVerified,
       email: attributes.email,
     };
   },
@@ -41,6 +42,9 @@ export const validateRequest = cache(
     const result = await lucia.validateSession(sessionId);
     // next.js throws when you attempt to set cookie when rendering page
     try {
+      if (!result.user?.emailVerified) {
+        redirect("/email-verification?message=please verify your email");
+      }
       if (result.session && result.session.fresh) {
         const sessionCookie = lucia.createSessionCookie(result.session.id);
         cookies().set(
@@ -73,5 +77,5 @@ interface DatabaseUserAttributes {
   username: string;
   id: string;
   email: string;
-  email_verified: boolean;
+  emailVerified: boolean;
 }

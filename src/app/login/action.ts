@@ -7,7 +7,6 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export async function login(_: any, formData: FormData) {
-  "use server";
   const username = formData.get("username") as string;
   const password = formData.get("password") as string;
 
@@ -17,9 +16,17 @@ export async function login(_: any, formData: FormData) {
     },
   });
 
+  console.log(user);
+
   if (!user) {
     return {
       error: "user not found",
+    };
+  }
+
+  if (!user.emailVerified) {
+    return {
+      error: "Please verify your email",
     };
   }
 
@@ -29,14 +36,14 @@ export async function login(_: any, formData: FormData) {
       error: "Invalid password",
     };
   }
-  const session = await lucia.createSession(user.id, {
-    country: "indonesia",
-  });
+  const session = await lucia.createSession(user.id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
+
   cookies().set(
     sessionCookie.name,
     sessionCookie.value,
     sessionCookie.attributes
   );
-  return redirect("/");
+
+  redirect("/");
 }
