@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { initOauth2Google } from "@/utils/oauth2Google";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,7 +13,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  initOauth2Google();
   return (
     <html lang="en">
       <body className={`${inter.className} mx-auto max-w-md`}>{children}</body>

@@ -1,3 +1,6 @@
+import prisma from "@/db";
+import { generatePasswordResetToken } from "@/utils/generatePasswordResetToken";
+import { sendEmail } from "@/utils/sendEmail";
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
 import { headers } from "next/headers";
@@ -12,10 +15,8 @@ const rateLimit = new Ratelimit({
 // set the runtime to edge so that the function runs on the edge
 export const runtime = "edge";
 
-export const GET = async (request: NextRequest) => {
+export const POST = async (request: NextRequest) => {
   const ip = headers().get("x-forwarded-for");
-
-  console.log({ ip });
 
   if (!ip) {
     return NextResponse.json({ message: "Invalid request" }, { status: 429 });
@@ -33,6 +34,33 @@ export const GET = async (request: NextRequest) => {
       }
     );
   }
+
+  const { email } = await request.json();
+
+  const user = await prisma.user.findFirst({ where: { email } });
+  if (!user) {
+    return NextResponse.json(
+      { message: "Email is not registered" },
+      { status: 404 }
+    );
+  }
+
+  const verificationToken = await generatePasswordResetToken(user.id);
+  const verificationLink =
+    "http://localhost:3000/reset-password/" + verificationToken;
+
+  const html = `
+  <div>
+    <p>Please follow this link to reset your password</p>
+    <a href=${verificationLink}>Click here</a>
+  </div>
+  `;
+
+  await sendEmail({
+    toEmail: email,
+    subject: "Reset Password Request",
+    html,
+  });
 
   return NextResponse.json(
     {
