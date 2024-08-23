@@ -13,7 +13,7 @@ const rateLimit = new Ratelimit({
 });
 
 // set the runtime to edge so that the function runs on the edge
-export const runtime = "edge";
+// export const runtime = "edge";
 
 export const POST = async (request: NextRequest) => {
   const ip = headers().get("x-forwarded-for");
@@ -55,6 +55,8 @@ export const POST = async (request: NextRequest) => {
     <a href=${verificationLink}>Click here</a>
   </div>
   `;
+
+  console.log("google client id : ", process.env.GOOGLE_CID);
 
   await sendEmail({
     toEmail: email,

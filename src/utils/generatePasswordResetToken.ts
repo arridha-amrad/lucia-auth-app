@@ -7,7 +7,7 @@ import prisma from "@/db";
 export async function generatePasswordResetToken(
   userId: string
 ): Promise<string> {
-  await prisma.passwordResetToken.delete({
+  await prisma.passwordResetToken.deleteMany({
     where: {
       userId,
     },

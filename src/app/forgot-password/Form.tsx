@@ -4,16 +4,22 @@ import { ChangeEvent, useState } from "react";
 
 export default function Form() {
   const [email, setEmail] = useState("");
+  const [isLoading, setLoading] = useState(false);
 
   const onSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const result = await fetch("/api/forgot-password", {
-      body: JSON.stringify({ email }),
-      method: "POST",
-    });
-    const data = await result.json();
-
-    console.log(data);
+    setLoading(true);
+    try {
+      const result = await fetch("/api/forgot-password", {
+        body: JSON.stringify({ email }),
+        method: "POST",
+      });
+      const data = await result.json();
+      console.log(data);
+    } catch (err) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -27,8 +33,12 @@ export default function Form() {
           type="text"
           name="email"
         />
-        <button type="submit" className="bg-blue-500 py-1 px-4">
-          Submit
+        <button
+          disabled={isLoading}
+          type="submit"
+          className="bg-blue-500 py-1 px-4"
+        >
+          {isLoading ? "Loading" : "Submit"}
         </button>
       </form>
     </div>
