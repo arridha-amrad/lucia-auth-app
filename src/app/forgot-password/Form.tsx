@@ -1,6 +1,10 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { ChangeEvent, useState } from "react";
+import { Loader2 } from "lucide-react";
 
 export default function Form() {
   const [email, setEmail] = useState("");
@@ -8,6 +12,7 @@ export default function Form() {
 
   const onSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!email) return;
     setLoading(true);
     try {
       const result = await fetch("/api/forgot-password", {
@@ -23,24 +28,29 @@ export default function Form() {
   };
 
   return (
-    <div>
-      <form onSubmit={onSubmit} className="flex flex-col gap-2" action="">
-        <input
-          value={email}
+    <form onSubmit={onSubmit} className="flex flex-col gap-6">
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="email"
-          className="py-2 px-4 bg-slate-700"
-          type="text"
+          value={email}
+          type="email"
+          id="email"
           name="email"
         />
-        <button
-          disabled={isLoading}
-          type="submit"
-          className="bg-blue-500 py-1 px-4"
-        >
-          {isLoading ? "Loading" : "Submit"}
-        </button>
-      </form>
-    </div>
+        <p className="text-sm leading-4 text-muted-foreground">
+          We will send you a link to your registered email to reset your
+          password
+        </p>
+      </div>
+      <Button
+        disabled={isLoading}
+        className="uppercase font-extrabold"
+        type="submit"
+      >
+        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        Send
+      </Button>
+    </form>
   );
 }

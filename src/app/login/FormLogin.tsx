@@ -3,6 +3,9 @@
 import React from "react";
 import { useFormState } from "react-dom";
 import { login } from "./action";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const initState = {
   error: "",
@@ -18,30 +21,17 @@ export default function FormLogin() {
           {state.error}
         </div>
       )}
-      <div className="flex flex-col">
-        <label htmlFor="username">Username</label>
-        <input
-          type="text"
-          className="bg-slate-700 text-slate-200 px-4 py-2"
-          id="username"
-          name="username"
-        />
+      <div className="space-y-1">
+        <Label htmlFor="username">Username</Label>
+        <Input type="text" id="username" name="username" />
       </div>
-      <div className="flex flex-col">
-        <label htmlFor="password">Password</label>
-        <input
-          className="bg-slate-700 text-slate-200 px-4 py-2"
-          type="password"
-          id="password"
-          name="password"
-        />
+      <div className="space-y-1">
+        <Label htmlFor="password">Password</Label>
+        <Input type="password" id="password" name="password" />
       </div>
-      <button
-        className="bg-blue-600 text-white rounded-lg py-2 px-4"
-        type="submit"
-      >
+      <Button className="uppercase font-extrabold" type="submit">
         Login
-      </button>
+      </Button>
     </form>
   );
 }

@@ -3,29 +3,46 @@
 import React from "react";
 import { useFormState } from "react-dom";
 import { verifyEmailAction } from "./action";
+import { Button } from "@/components/ui/button";
+
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 const initialState = {
   error: "",
 };
 
 export default function Form() {
+  const [value, setValue] = React.useState("");
+
   const [state, action] = useFormState(verifyEmailAction, initialState);
   return (
-    <div>
-      {!!state.error && (
-        <div className="bg-red-500/50 py-2 px-4">
-          <p className="text-red-500">{state.error}</p>
-        </div>
-      )}
-      <form action={action}>
-        <input className="text-slate-900" type="text" name="code" />
-        <button
-          className="bg-blue-600 text-white rounded-lg py-2 px-4"
-          type="submit"
+    <form action={action} className="flex flex-col gap-3">
+      <div className="space-y-2 self-center">
+        <InputOTP
+          maxLength={6}
+          value={value}
+          onChange={(value) => setValue(value)}
         >
-          Submit
-        </button>
-      </form>
-    </div>
+          <InputOTPGroup>
+            <InputOTPSlot index={0} />
+            <InputOTPSlot index={1} />
+            <InputOTPSlot index={2} />
+            <InputOTPSlot index={3} />
+            <InputOTPSlot index={4} />
+            <InputOTPSlot index={5} />
+          </InputOTPGroup>
+        </InputOTP>
+      </div>
+      <p className="text-muted-foreground text-sm text-center">
+        Enter the code you receive from email
+      </p>
+      <Button className="uppercase font-extrabold" type="submit">
+        Verify
+      </Button>
+    </form>
   );
 }

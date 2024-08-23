@@ -2,88 +2,101 @@
 
 import { lucia } from "@/auth";
 import prisma from "@/db";
+import { actionClient } from "@/lib/safe-action";
 import { generateEmailVerificationCode } from "@/utils/generateVerificationCode";
 import { sendEmail } from "@/utils/sendEmail";
 import { hash } from "@node-rs/argon2";
+import { flattenValidationErrors } from "next-safe-action";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { z } from "zod";
+import { zfd } from "zod-form-data";
 
-export const register = async (_: any, formData: FormData) => {
-  const rawFormData = {
-    email: formData.get("email") as string,
-    username: formData.get("username") as string,
-    password: formData.get("password") as string,
-  };
-
-  try {
-    const isEmailRegistered = await prisma.user.findFirst({
-      where: {
-        email: rawFormData.email,
-      },
-    });
-
-    if (isEmailRegistered) {
-      return {
-        error: "Email has been registered",
-      };
+export const register = actionClient
+  .schema(
+    zfd.formData({
+      email: zfd.text(z.string().email()),
+      username: zfd.text(z.string()),
+      password: zfd.text(z.string()),
+    }),
+    {
+      handleValidationErrorsShape: (ve) =>
+        flattenValidationErrors(ve).fieldErrors,
     }
+  )
+  .action(async ({ parsedInput: { email, password, username } }) => {
+    console.log({ email, password, username });
+  });
 
-    const isUsernameRegistered = await prisma.user.findFirst({
-      where: {
-        username: rawFormData.username,
-      },
-    });
+// export const register = async (_: any, formData: FormData) => {
+//   const rawFormData = {
+//     email: formData.get("email") as string,
+//     username: formData.get("username") as string,
+//     password: formData.get("password") as string,
+//   };
 
-    if (isUsernameRegistered) {
-      return {
-        error: "Username has been registered",
-      };
-    }
-    const hashedPassword = await hash(rawFormData.password, {
-      memoryCost: 19456,
-      timeCost: 2,
-      outputLen: 32,
-      parallelism: 1,
-    });
+//   const isEmailRegistered = await prisma.user.findFirst({
+//     where: {
+//       email: rawFormData.email,
+//     },
+//   });
 
-    const newUser = await prisma.user.create({
-      data: {
-        email: rawFormData.email,
-        username: rawFormData.username,
-        passwordHash: hashedPassword,
-      },
-    });
+//   if (isEmailRegistered) {
+//     return {
+//       error: "Email has been registered",
+//     };
+//   }
 
-    const verificationCode = await generateEmailVerificationCode(
-      newUser.id,
-      newUser.email
-    );
+//   const isUsernameRegistered = await prisma.user.findFirst({
+//     where: {
+//       username: rawFormData.username,
+//     },
+//   });
 
-    const html = `
-    <div>Hello ${newUser.username}</div>
-    <p>This is your verification code : ${verificationCode}</p>
-    `;
+//   if (isUsernameRegistered) {
+//     return {
+//       error: "Username has been registered",
+//     };
+//   }
+//   const hashedPassword = await hash(rawFormData.password, {
+//     memoryCost: 19456,
+//     timeCost: 2,
+//     outputLen: 32,
+//     parallelism: 1,
+//   });
 
-    await sendEmail({
-      html,
-      subject: "Email verification",
-      toEmail: newUser.email,
-    });
+//   const newUser = await prisma.user.create({
+//     data: {
+//       email: rawFormData.email,
+//       username: rawFormData.username,
+//       passwordHash: hashedPassword,
+//     },
+//   });
 
-    const session = await lucia.createSession(newUser.id, {});
-    const sessionCookie = lucia.createSessionCookie(session.id);
+//   const verificationCode = await generateEmailVerificationCode(
+//     newUser.id,
+//     newUser.email
+//   );
 
-    cookies().set(
-      sessionCookie.name,
-      sessionCookie.value,
-      sessionCookie.attributes
-    );
+//   const html = `
+//     <div>Hello ${newUser.username}</div>
+//     <p>This is your verification code : ${verificationCode}</p>
+//     `;
 
-    redirect("/email-verification");
-  } catch (err) {
-    console.log(err);
-    return {
-      error: "Something went wrong",
-    };
-  }
-};
+//   await sendEmail({
+//     html,
+//     subject: "Email verification",
+//     toEmail: newUser.email,
+//   });
+
+//   const session = await lucia.createSession(newUser.id, {});
+//   const sessionCookie = lucia.createSessionCookie(session.id);
+
+//   cookies().set(
+//     sessionCookie.name,
+//     sessionCookie.value,
+//     sessionCookie.attributes
+//   );
+
+//   redirect("/email-verification");
+// };
