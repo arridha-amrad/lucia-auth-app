@@ -29,16 +29,11 @@ export default function FormRegister() {
       }
       if (serverError) {
         toast({
+          variant: "destructive",
           title: "Something went wrong",
           description: serverError,
         });
       }
-    },
-    onSuccess: ({ data }) => {
-      toast({
-        title: "Email verification is required",
-        description: "An email with verification code has been sent to",
-      });
     },
   });
   return (
@@ -46,14 +41,17 @@ export default function FormRegister() {
       <div className="space-y-1">
         <Label htmlFor="username">Username</Label>
         <Input type="text" id="username" name="username" />
+        <p className="text-sm text-red-500">{error.username}</p>
       </div>
       <div className="space-y-1">
         <Label htmlFor="email">Email</Label>
         <Input type="email" id="email" name="email" />
+        <p className="text-sm text-red-500">{error.email}</p>
       </div>
       <div className="space-y-1">
         <Label htmlFor="password">Password</Label>
         <Input type="password" id="password" name="password" />
+        <p className="text-sm text-red-500">{error.password}</p>
       </div>
       <Button
         disabled={isExecuting}
