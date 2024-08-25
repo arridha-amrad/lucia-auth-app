@@ -56,8 +56,6 @@ export const POST = async (request: NextRequest) => {
   </div>
   `;
 
-  console.log("google client id : ", process.env.GOOGLE_CID);
-
   await sendEmail({
     toEmail: email,
     subject: "Reset Password Request",

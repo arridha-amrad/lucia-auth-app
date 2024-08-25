@@ -1,8 +1,23 @@
 import React from "react";
 import Form from "./Form";
 import Link from "next/link";
+import { Metadata } from "next";
+import { redirect } from "next/navigation";
 
-export default function Page() {
+export const metadata: Metadata = {
+  title: "Reset Password",
+};
+
+type Props = {
+  params: {
+    token: string;
+  };
+};
+
+export default function Page({ params }: Props) {
+  if (!params.token) {
+    redirect("/login");
+  }
   return (
     <main className="min-h-screen w-full flex flex-col">
       <div className="flex-1 py-10 w-full">
@@ -15,7 +30,7 @@ export default function Page() {
           <div className="border px-10 py-10 rounded-lg">
             <Form />
             <div className="pt-6 text-center text-sm">
-              Already have an account?
+              Back to
               <Link className="text-blue-500 pl-1" href="/login">
                 Login
               </Link>

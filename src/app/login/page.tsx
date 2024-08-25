@@ -20,8 +20,13 @@ export default function Page() {
             <FormLogin />
             <div className="pt-6 text-center text-sm">
               Don't have an account?
-              <Link className="text-blue-500 pl-1" href="/register">
+              <Link className="text-primary pl-1" href="/register">
                 Register
+              </Link>
+            </div>
+            <div className="py-3 text-center text-sm">
+              <Link className="text-primary" href="/forgot-password">
+                forgot password ?
               </Link>
             </div>
           </div>

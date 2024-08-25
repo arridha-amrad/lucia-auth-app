@@ -26,6 +26,7 @@
     "lucide-react": "^0.429.0",
     "next": "14.2.5",
     "next-safe-action": "^7.7.1",
+    "nextjs-toploader": "^1.6.12",
     "nodemailer": "^6.9.14",
     "oslo": "^1.2.1",
     "prisma": "^5.18.0",
