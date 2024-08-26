@@ -5,8 +5,6 @@ import { redirect } from "next/navigation";
 export default async function Home() {
   const { user } = await validateRequest();
 
-  console.log({ user });
-
   if (!user) {
     return redirect("/login");
   }
@@ -18,6 +16,7 @@ export default async function Home() {
         <p>email : {user.email}</p>
         <p>isVerified : {user.emailVerified ? "true" : "false"}</p>
         <p>githubId : {user.githubId}</p>
+        <p>googleId : {user.googleId}</p>
         <p>id : {user.id}</p>
       </div>
       <ButtonLogout />

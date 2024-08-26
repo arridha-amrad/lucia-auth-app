@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 export const loginGithub = actionClient.action(async ({}) => {
   const state = generateState();
   const url = await github.createAuthorizationURL(state);
-  cookies().set("github_oauth_state", state, {
+  cookies().set("state", state, {
     path: "/",
     secure: process.env.NODE_ENV === "production",
     httpOnly: true,
@@ -17,5 +17,5 @@ export const loginGithub = actionClient.action(async ({}) => {
     sameSite: "lax",
   });
 
-  redirect(url.toString());
+  return redirect(url.toString());
 });

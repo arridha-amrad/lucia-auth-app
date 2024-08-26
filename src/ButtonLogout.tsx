@@ -17,6 +17,8 @@ export default async function ButtonLogout() {
       sessionCookie.value,
       sessionCookie.attributes
     );
+    cookies().delete("state");
+    cookies().delete("codeVerifier");
     return redirect("/login");
   }
 

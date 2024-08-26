@@ -3,13 +3,12 @@ import { OAuth2RequestError } from "arctic";
 import { github } from "@/lib/github.init";
 import { lucia } from "@/auth";
 import prisma from "@/db";
-import { redirect } from "next/navigation";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
-  const storedState = cookies().get("github_oauth_state")?.value ?? null;
+  const storedState = cookies().get("state")?.value ?? null;
   if (!code || !state || !storedState || state !== storedState) {
     return new Response(null, {
       status: 400,
@@ -49,7 +48,6 @@ export async function GET(request: Request) {
       });
     }
 
-    // Replace this with your own DB client.
     const newUser = await prisma.user.create({
       data: {
         githubId: githubUser.id,
@@ -67,7 +65,7 @@ export async function GET(request: Request) {
       sessionCookie.value,
       sessionCookie.attributes
     );
-    // return redirect("/");
+
     return new Response(null, {
       status: 302,
       headers: {
@@ -82,6 +80,9 @@ export async function GET(request: Request) {
       // invalid code
       return new Response(null, {
         status: 400,
+        headers: {
+          Location: "/",
+        },
       });
     }
     return new Response(null, {
